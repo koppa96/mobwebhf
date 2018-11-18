@@ -1,10 +1,16 @@
 package hu.bme.aut.mobwebhf.sudoku.model;
 
+import android.support.annotation.NonNull;
+
 import java.util.LinkedList;
 import java.util.Random;
 
 public class SudokuBoard {
     private SudokuField[][] board;
+    private Difficulty difficulty;
+    private SudokuBoard() {
+        board = new SudokuField[9][9];
+    }
 
     public SudokuBoard(String serializedSudoku, Difficulty difficulty) throws IllegalArgumentException {
         if (serializedSudoku.length() != 81) {
@@ -12,6 +18,8 @@ public class SudokuBoard {
         }
 
         board = new SudokuField[9][9];
+        this.difficulty = difficulty;
+
         Random random = new Random();
         for (int i = 0; i < 81; i++) {
             int value = Character.getNumericValue(serializedSudoku.charAt(i));
@@ -104,5 +112,34 @@ public class SudokuBoard {
 
     public SudokuField[][] getBoard() {
         return board;
+    }
+
+    @NonNull
+    public static SudokuBoard parseBoard(String lastGame) {
+        String[] boardElements = lastGame.split(" ");
+        SudokuBoard newBoard = new SudokuBoard();
+
+        newBoard.difficulty = Difficulty.valueOf(boardElements[0]);
+        for (int i = 0; i < 81; i++) {
+            int value = Integer.parseInt(boardElements[i]);
+            boolean fixed = boardElements[i].charAt(1) == 'f';
+
+            newBoard.board[i / 9][i % 9] = new SudokuField(value, fixed);
+        }
+
+        return newBoard;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(difficulty.toString() + " ");
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                builder.append(board[i][j].toString() + " ");
+            }
+        }
+
+        return builder.toString();
     }
 }

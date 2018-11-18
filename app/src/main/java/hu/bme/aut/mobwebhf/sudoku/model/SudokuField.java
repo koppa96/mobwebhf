@@ -1,5 +1,7 @@
 package hu.bme.aut.mobwebhf.sudoku.model;
 
+import android.support.annotation.NonNull;
+
 public class SudokuField {
     private boolean variable;
     private int value;
@@ -19,5 +21,11 @@ public class SudokuField {
 
     public boolean isVariable() {
         return variable;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return Integer.toString(value) + (variable ? "" : "f");
     }
 }
