@@ -18,7 +18,10 @@ import android.view.MenuItem;
 import hu.bme.aut.mobwebhf.sudoku.data.AppDatabase;
 import hu.bme.aut.mobwebhf.sudoku.fragments.GameFragment;
 import hu.bme.aut.mobwebhf.sudoku.fragments.HighscoreFragment;
+import hu.bme.aut.mobwebhf.sudoku.fragments.HomeFragment;
+import hu.bme.aut.mobwebhf.sudoku.fragments.PauseFragment;
 import hu.bme.aut.mobwebhf.sudoku.fragments.SettingsFragment;
+import hu.bme.aut.mobwebhf.sudoku.model.Difficulty;
 
 public class MainActivity extends AppCompatActivity
                             implements NavigationView.OnNavigationItemSelectedListener {
@@ -31,7 +34,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         database = AppDatabase.getInstance(getApplicationContext());
-        loadSudokuCount();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -45,11 +47,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        getSupportFragmentManager().beginTransaction()
-                                   .replace(R.id.fragment_container, new GameFragment())
-                                   .commit();
         navigationView.setCheckedItem(R.id.nav_playgame);
+
+        loadSavedSudokuCount();
     }
 
     @Override
@@ -62,11 +62,26 @@ public class MainActivity extends AppCompatActivity
     }
 
     @SuppressLint("StaticFieldLeak")
-    private void loadSudokuCount() {
+    private void loadSavedSudokuCount() {
         new AsyncTask<Void, Void, Integer>() {
             @Override
             protected Integer doInBackground(Void... voids) {
-                return database.sudokuDao().getSudokuCount();
+                return database.savedSudokuDao().numberOfSavedSudokus();
+            }
+
+            @Override
+            protected void onPostExecute(Integer count) {
+                if (count > 0) {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new PauseFragment())
+                            .commit();
+                } else {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new HomeFragment())
+                            .commit();
+                }
             }
         }.execute();
     }
@@ -76,13 +91,10 @@ public class MainActivity extends AppCompatActivity
         FragmentManager manager = getSupportFragmentManager();
         switch (menuItem.getItemId()) {
             case R.id.nav_playgame:
-                FragmentTransaction transaction = manager.beginTransaction();
-
-                transaction.replace(R.id.fragment_container, new GameFragment());
-                transaction.commit();
+                loadSavedSudokuCount();
                 break;
             case R.id.nav_highscores:
-                transaction = manager.beginTransaction();
+                FragmentTransaction transaction = manager.beginTransaction();
 
                 transaction.replace(R.id.fragment_container, new HighscoreFragment());
                 transaction.commit();
@@ -97,5 +109,27 @@ public class MainActivity extends AppCompatActivity
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void startGameFromBoard(String board, boolean isSavedGame, int seconds, Difficulty difficulty) {
+        Bundle bundle = new Bundle();
+        bundle.putString("board", board);
+        bundle.putBoolean("issaved", isSavedGame);
+        bundle.putInt("seconds", seconds);
+        bundle.putString("difficulty", difficulty.toString());
+        GameFragment gameFragment = new GameFragment();
+        gameFragment.setArguments(bundle);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, gameFragment)
+                .commit();
+    }
+
+    public void navigateHomeScreen() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, new HomeFragment())
+                .commit();
     }
 }

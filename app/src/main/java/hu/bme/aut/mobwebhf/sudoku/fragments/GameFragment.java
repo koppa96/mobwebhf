@@ -21,46 +21,68 @@ import java.util.Random;
 
 import hu.bme.aut.mobwebhf.sudoku.R;
 import hu.bme.aut.mobwebhf.sudoku.data.AppDatabase;
+import hu.bme.aut.mobwebhf.sudoku.data.SavedSudoku;
 import hu.bme.aut.mobwebhf.sudoku.data.Sudoku;
 import hu.bme.aut.mobwebhf.sudoku.model.Difficulty;
 import hu.bme.aut.mobwebhf.sudoku.model.SudokuBoard;
 import hu.bme.aut.mobwebhf.sudoku.model.SudokuField;
+import hu.bme.aut.mobwebhf.sudoku.model.Timer;
 
 public class GameFragment extends Fragment {
     private TextView[][] boardGUI;
     private TextView selectedItem;
-    private AppDatabase database;
+    private TextView tvTime;
     private SudokuBoard boardModel;
     private HashMap<TextView, SudokuField> fieldMap;
+    private AppDatabase database;
+    private Timer timer;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_game, container, false);
-
         database = AppDatabase.getInstance(getActivity().getApplicationContext());
+
+        Bundle args = getArguments();
+        if (args.getBoolean("issaved")) {
+            boardModel = SudokuBoard.parseBoard(args.getString("board"));
+            timer = new Timer((TextView) view.findViewById(R.id.tvTime), args.getInt("seconds"));
+        } else {
+            boardModel = new SudokuBoard(args.getString("board"), Difficulty.valueOf(args.getString("difficulty")));
+            timer = new Timer((TextView) view.findViewById(R.id.tvTime));
+        }
 
         boardGUI = new TextView[9][9];
         fieldMap = new HashMap<>();
-        int[] rowIds = new int[] { R.id.row1, R.id.row2, R.id.row3, R.id.row4, R.id.row5, R.id.row6,
-                                   R.id.row7, R.id.row8, R.id.row9 };
-        int[] colIds = new int[] { R.id.column1, R.id.column2, R.id.column3, R.id.column4, R.id.column5,
-                                   R.id.column6, R.id.column7, R.id.column8, R.id.column9 };
-        int[] buttonIds = new int[] { R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5, R.id.btn6,
-                                      R.id.btn7, R.id.btn8, R.id.btn9 };
+        int[] rowIds = new int[]{R.id.row1, R.id.row2, R.id.row3, R.id.row4, R.id.row5, R.id.row6,
+                R.id.row7, R.id.row8, R.id.row9};
+        int[] colIds = new int[]{R.id.column1, R.id.column2, R.id.column3, R.id.column4, R.id.column5,
+                R.id.column6, R.id.column7, R.id.column8, R.id.column9};
+        int[] buttonIds = new int[]{R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5, R.id.btn6,
+                R.id.btn7, R.id.btn8, R.id.btn9};
 
         for (int i = 0; i < 9; i++) {
             View row = view.findViewById(rowIds[i]);
             for (int j = 0; j < 9; j++) {
                 boardGUI[i][j] = row.findViewById(colIds[j]);
+                fieldMap.put(boardGUI[i][j], boardModel.getBoard()[i][j]);
+
+                if (!boardModel.getBoard()[i][j].isVariable()) {
+                    boardGUI[i][j].setBackgroundColor(Color.LTGRAY);
+                }
+
                 boardGUI[i][j].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if (!fieldMap.get((TextView) v).isVariable()) {
+                            Toast.makeText(view.getContext(), getString(R.string.fixed_tile), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
                         if (selectedItem != null) {
                             selectedItem.setBackgroundColor(Color.WHITE);
                         }
-
-                        selectedItem = (TextView)v;
+                        selectedItem = (TextView) v;
                         selectedItem.setBackgroundColor(Color.YELLOW);
                     }
                 });
@@ -73,18 +95,15 @@ public class GameFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     if (selectedItem == null) {
-                        Toast.makeText(view.getContext(), "Nope", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(view.getContext(), getString(R.string.select_var_tile), Toast.LENGTH_SHORT).show();
                     } else {
                         SudokuField field = fieldMap.get(selectedItem);
-                        if (!field.isVariable()) {
-                            Toast.makeText(view.getContext(), "Nope", Toast.LENGTH_SHORT).show();
-                        } else {
-                            field.setValue(Integer.parseInt(button.getText().toString()));
-                            selectedItem.setText(button.getText());
 
-                            if (boardModel.isFilled() && boardModel.checkIfWon()) {
-                                Toast.makeText(view.getContext(), "YOU WIN :::))))))))))))", Toast.LENGTH_LONG).show();
-                            }
+                        field.setValue(Integer.parseInt(button.getText().toString()));
+                        selectedItem.setText(button.getText());
+
+                        if (boardModel.isFilled() && boardModel.checkIfWon()) {
+                            Toast.makeText(view.getContext(), "YOU WIN :::))))))))))))", Toast.LENGTH_LONG).show();
                         }
                     }
                 }
@@ -96,46 +115,18 @@ public class GameFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (selectedItem == null) {
-                    Toast.makeText(view.getContext(), "Nope", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(view.getContext(), R.string.select_var_tile, Toast.LENGTH_SHORT).show();
                 } else {
                     SudokuField field = fieldMap.get(selectedItem);
-                    if (field.isVariable()) {
-                        field.setValue(0);
-                        selectedItem.setText("");
-                    } else {
-                        Toast.makeText(view.getContext(), "Nope", Toast.LENGTH_SHORT).show();
-                    }
+                    field.setValue(0);
+                    selectedItem.setText("");
                 }
             }
         });
 
-        loadRandomSudoku();
+        updateViewFromModel();
 
         return view;
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private void loadRandomSudoku() {
-        new AsyncTask<Void, Void, Sudoku>() {
-            @Override
-            protected Sudoku doInBackground(Void... voids) {
-                int sudokuCount = database.sudokuDao().getSudokuCount();
-                Random random = new Random();
-                return database.sudokuDao().getSudokuById(random.nextInt(sudokuCount));
-            }
-
-            @Override
-            protected void onPostExecute(Sudoku sudoku) {
-                boardModel = new SudokuBoard(sudoku.board, Difficulty.EASY);
-                SudokuField[][] fields = boardModel.getBoard();
-                for (int i = 0; i < 9; i++) {
-                    for (int j = 0; j < 9; j++) {
-                        fieldMap.put(boardGUI[i][j], fields[i][j]);
-                    }
-                }
-                updateViewFromModel();
-            }
-        }.execute();
     }
 
     private void updateViewFromModel() {
@@ -150,5 +141,24 @@ public class GameFragment extends Fragment {
                 tv.setText(Integer.toString(field.getValue()));
             }
         }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    @Override
+    public void onStop() {
+        super.onStop();
+        timer.stopTimer();
+
+        new AsyncTask<SudokuBoard, Void, Void>() {
+            @Override
+            protected Void doInBackground(SudokuBoard... sudokuBoards) {
+                SavedSudoku savedSudoku = new SavedSudoku();
+                savedSudoku.board = sudokuBoards[0].toString();
+                savedSudoku.time = timer.getValue();
+
+                database.savedSudokuDao().insert(savedSudoku);
+                return null;
+            }
+        }.execute(boardModel);
     }
 }
