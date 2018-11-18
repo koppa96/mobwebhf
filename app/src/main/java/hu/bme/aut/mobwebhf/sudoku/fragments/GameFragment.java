@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -46,10 +47,10 @@ public class GameFragment extends Fragment {
         Bundle args = getArguments();
         if (args.getBoolean("issaved")) {
             boardModel = SudokuBoard.parseBoard(args.getString("board"));
-            timer = new Timer((TextView) view.findViewById(R.id.tvTime), args.getInt("seconds"));
+            timer = new Timer((TextView) view.findViewById(R.id.tvTime), getActivity(), args.getInt("seconds"));
         } else {
             boardModel = new SudokuBoard(args.getString("board"), Difficulty.valueOf(args.getString("difficulty")));
-            timer = new Timer((TextView) view.findViewById(R.id.tvTime));
+            timer = new Timer((TextView) view.findViewById(R.id.tvTime), getActivity());
         }
 
         boardGUI = new TextView[9][9];
@@ -68,7 +69,7 @@ public class GameFragment extends Fragment {
                 fieldMap.put(boardGUI[i][j], boardModel.getBoard()[i][j]);
 
                 if (!boardModel.getBoard()[i][j].isVariable()) {
-                    boardGUI[i][j].setBackgroundColor(Color.LTGRAY);
+                    boardGUI[i][j].setBackgroundColor(Color.argb(255, 240, 240, 240));
                 }
 
                 boardGUI[i][j].setOnClickListener(new View.OnClickListener() {
@@ -83,7 +84,7 @@ public class GameFragment extends Fragment {
                             selectedItem.setBackgroundColor(Color.WHITE);
                         }
                         selectedItem = (TextView) v;
-                        selectedItem.setBackgroundColor(Color.YELLOW);
+                        selectedItem.setBackgroundColor(Color.argb(255, 200, 200, 255));
                     }
                 });
             }
@@ -103,7 +104,15 @@ public class GameFragment extends Fragment {
                         selectedItem.setText(button.getText());
 
                         if (boardModel.isFilled() && boardModel.checkIfWon()) {
-                            Toast.makeText(view.getContext(), "YOU WIN :::))))))))))))", Toast.LENGTH_LONG).show();
+                            timer.stopTimer();
+                            Bundle bundle = new Bundle();
+                            bundle.putString("difficulty", boardModel.getDifficulty().toString());
+                            bundle.putInt("time", timer.getValue());
+
+                            HighscoreInputDialogFragment dialogFragment = new HighscoreInputDialogFragment();
+                            dialogFragment.setArguments(bundle);
+
+                            dialogFragment.show(getActivity().getSupportFragmentManager(), dialogFragment.TAG);
                         }
                     }
                 }
@@ -125,6 +134,7 @@ public class GameFragment extends Fragment {
         });
 
         updateViewFromModel();
+        timer.start();
 
         return view;
     }
@@ -147,8 +157,12 @@ public class GameFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        timer.stopTimer();
 
+        if (boardModel.isFilled() && boardModel.checkIfWon()) {
+            return;
+        }
+
+        timer.stopTimer();
         new AsyncTask<SudokuBoard, Void, Void>() {
             @Override
             protected Void doInBackground(SudokuBoard... sudokuBoards) {

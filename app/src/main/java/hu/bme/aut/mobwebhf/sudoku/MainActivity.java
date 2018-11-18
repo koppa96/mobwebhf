@@ -74,11 +74,13 @@ public class MainActivity extends AppCompatActivity
                 if (count > 0) {
                     getSupportFragmentManager()
                             .beginTransaction()
+                            .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
                             .replace(R.id.fragment_container, new PauseFragment())
                             .commit();
                 } else {
                     getSupportFragmentManager()
                             .beginTransaction()
+                            .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
                             .replace(R.id.fragment_container, new HomeFragment())
                             .commit();
                 }
@@ -95,13 +97,13 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_highscores:
                 FragmentTransaction transaction = manager.beginTransaction();
-
+                transaction.setCustomAnimations(R.animator.fade_in, R.animator.fade_out);
                 transaction.replace(R.id.fragment_container, new HighscoreFragment());
                 transaction.commit();
                 break;
             case R.id.nav_settings:
                 transaction = manager.beginTransaction();
-
+                transaction.setCustomAnimations(R.animator.fade_in, R.animator.fade_out);
                 transaction.replace(R.id.fragment_container, new SettingsFragment());
                 transaction.commit();
                 break;
@@ -122,6 +124,7 @@ public class MainActivity extends AppCompatActivity
 
         getSupportFragmentManager()
                 .beginTransaction()
+                .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
                 .replace(R.id.fragment_container, gameFragment)
                 .commit();
     }
@@ -129,6 +132,7 @@ public class MainActivity extends AppCompatActivity
     public void navigateHomeScreen() {
         getSupportFragmentManager()
                 .beginTransaction()
+                .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
                 .replace(R.id.fragment_container, new HomeFragment())
                 .commit();
     }

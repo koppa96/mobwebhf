@@ -1,5 +1,6 @@
 package hu.bme.aut.mobwebhf.sudoku.model;
 
+import android.app.Activity;
 import android.provider.ContactsContract;
 import android.widget.TextView;
 
@@ -7,15 +8,17 @@ public class Timer extends Thread {
     private int value;
     private boolean running;
     private TextView view;
+    private Activity activity;
 
-    public Timer(TextView view) {
-        this(view, 0);
+    public Timer(TextView view, Activity activity) {
+        this(view, activity, 0);
     }
 
-    public Timer(TextView view, int startCount) {
+    public Timer(TextView view, Activity activity, int startCount) {
         value = startCount;
         running = true;
         this.view = view;
+        this.activity = activity;
     }
 
     @Override
@@ -32,8 +35,13 @@ public class Timer extends Thread {
             }
 
             value++;
-            view.setText(Integer.toString(value / 60) + ":"
-                    + (value % 60 < 10 ? "0" : "") + Integer.toString(value % 60));
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    view.setText(Integer.toString(value / 60) + ":"
+                            + (value % 60 < 10 ? "0" : "") + Integer.toString(value % 60));
+                }
+            });
         }
     }
 

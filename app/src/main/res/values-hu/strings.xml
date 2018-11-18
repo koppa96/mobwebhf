@@ -17,4 +17,13 @@
     <string name="hard">Nehéz</string>
     <string name="start_game">Játék indítása</string>
     <string name="choose_difficulty">Válassz nehézséget</string>
+    <string name="your_name">A neved</string>
+    <string name="congratulations">Gratulálok</string>
+    <string name="highscore_input_description">Sikeresen megoldottad a sudokut. Kérlek add meg a neved, és az eredményed mentésre kerül. Ha nem szeretnéd menteni, nyomd meg a mégse gombot.</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Mégse</string>
+    <string name="must_fill">Ezt muszáj kitölteni.</string>
+    <string name="save_successful">Az eredményed sikeresen mentésre került.</string>
+    <string name="difficulty">Nehézség: %1$s</string>
+    <string name="time">Idő: %1$d</string>
 </resources>

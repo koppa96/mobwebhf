@@ -30,10 +30,10 @@ public class SudokuBoard {
                     removePercent = 40;
                     break;
                 case HARD:
-                    removePercent = 60;
+                    removePercent = 70;
                     break;
                 case MEDIUM:
-                    removePercent = 50;
+                    removePercent = 55;
                     break;
                 default:
                     removePercent = 50;
@@ -121,10 +121,10 @@ public class SudokuBoard {
 
         newBoard.difficulty = Difficulty.valueOf(boardElements[0]);
         for (int i = 0; i < 81; i++) {
-            int value = Integer.parseInt(boardElements[i]);
-            boolean fixed = boardElements[i].charAt(1) == 'f';
+            int value = Integer.parseInt(boardElements[i + 1].substring(0, 1));
+            boolean variable = boardElements[i + 1].length() == 1;
 
-            newBoard.board[i / 9][i % 9] = new SudokuField(value, fixed);
+            newBoard.board[i / 9][i % 9] = new SudokuField(value, variable);
         }
 
         return newBoard;
@@ -141,5 +141,9 @@ public class SudokuBoard {
         }
 
         return builder.toString();
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
     }
 }
