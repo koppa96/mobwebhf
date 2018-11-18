@@ -6,4 +6,15 @@
     <string name="settings">Beállítások</string>
     <string name="navigation_drawer_open">Menü megnyitása</string>
     <string name="navigation_drawer_close">Menü bezárása</string>
+    <string name="game_paused">Játék felfüggesztve</string>
+    <string name="game_paused_message">Nem fejezted be a legutóbbi játékod. Folytathatod azt a játékot, vagy újat is kezdhetsz.</string>
+    <string name="continue_game">Játék folytatása</string>
+    <string name="delete_game">Aktuális játék törlése és új kezdése</string>
+    <string name="select_var_tile">Válassz egy szerkeszthető mezőt először!</string>
+    <string name="fixed_tile">Ez a mező nem választható, mert fix!</string>
+    <string name="easy">Könnyű</string>
+    <string name="medium">Közepes</string>
+    <string name="hard">Nehéz</string>
+    <string name="start_game">Játék indítása</string>
+    <string name="choose_difficulty">Válassz nehézséget</string>
 </resources>
