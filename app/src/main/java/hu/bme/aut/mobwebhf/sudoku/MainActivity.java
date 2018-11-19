@@ -15,12 +15,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 
-import hu.bme.aut.mobwebhf.sudoku.data.AppDatabase;
-import hu.bme.aut.mobwebhf.sudoku.fragments.GameFragment;
-import hu.bme.aut.mobwebhf.sudoku.fragments.HighscoreFragment;
-import hu.bme.aut.mobwebhf.sudoku.fragments.HomeFragment;
-import hu.bme.aut.mobwebhf.sudoku.fragments.PauseFragment;
-import hu.bme.aut.mobwebhf.sudoku.fragments.SettingsFragment;
+import hu.bme.aut.mobwebhf.sudoku.data.database.AppDatabase;
+import hu.bme.aut.mobwebhf.sudoku.fragments.game.GameFragment;
+import hu.bme.aut.mobwebhf.sudoku.fragments.highscore.HighscoreFragment;
+import hu.bme.aut.mobwebhf.sudoku.fragments.game.HomeFragment;
+import hu.bme.aut.mobwebhf.sudoku.fragments.game.PauseFragment;
+import hu.bme.aut.mobwebhf.sudoku.fragments.settings.SettingsFragment;
 import hu.bme.aut.mobwebhf.sudoku.model.Difficulty;
 
 public class MainActivity extends AppCompatActivity

@@ -24,5 +24,5 @@
     <string name="must_fill">This must be filled.</string>
     <string name="save_successful">Your result has been successfully saved.</string>
     <string name="difficulty">Difficulty: %1$s</string>
-    <string name="time">Time: %1$d</string>
+    <string name="time">Time: %1$d:%2$d</string>
 </resources>

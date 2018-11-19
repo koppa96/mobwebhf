@@ -25,5 +25,5 @@
     <string name="must_fill">Ezt muszáj kitölteni.</string>
     <string name="save_successful">Az eredményed sikeresen mentésre került.</string>
     <string name="difficulty">Nehézség: %1$s</string>
-    <string name="time">Idő: %1$d</string>
+    <string name="time">Idő: %1$d:%2$d</string>
 </resources>

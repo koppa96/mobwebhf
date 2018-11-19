@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.provider.ContactsContract;
 import android.widget.TextView;
 
+import hu.bme.aut.mobwebhf.sudoku.R;
+
 public class Timer extends Thread {
     private int value;
     private boolean running;
     private TextView view;
     private Activity activity;
+    private long t1;
 
     public Timer(TextView view, Activity activity) {
         this(view, activity, 0);
@@ -23,7 +26,17 @@ public class Timer extends Thread {
 
     @Override
     public void run() {
+        t1 = System.currentTimeMillis();
         while (true) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    view.setText(Integer.toString(value / 60) + ":"
+                            + (value % 60 < 10 ? "0" : "") + Integer.toString(value % 60));
+                }
+            });
+
+            t1 = System.currentTimeMillis();
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -35,13 +48,6 @@ public class Timer extends Thread {
             }
 
             value++;
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    view.setText(Integer.toString(value / 60) + ":"
-                            + (value % 60 < 10 ? "0" : "") + Integer.toString(value % 60));
-                }
-            });
         }
     }
 
