@@ -14,7 +14,7 @@ public interface HighscoreDao {
     @Query("SELECT * FROM highscores")
     List<Highscore> getAll();
 
-    @Query("SELECT * FROM highscores WHERE difficulty = :diff")
+    @Query("SELECT * FROM highscores WHERE difficulty = :diff ORDER BY seconds")
     List<Highscore> getHighscoresOfDifficulty(String diff);
 
     @Insert
