@@ -25,17 +25,20 @@ import hu.bme.aut.mobwebhf.sudoku.R;
 import hu.bme.aut.mobwebhf.sudoku.data.database.AppDatabase;
 
 public class SettingsFragment extends Fragment {
+    private SharedPreferences sharedPref;
+    private RadioButton rBtnDark;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         RadioButton rBtnLight = view.findViewById(R.id.rBtnLight);
-        final RadioButton rBtnDark = view.findViewById(R.id.rBtnDark);
+        rBtnDark = view.findViewById(R.id.rBtnDark);
         Button btnSet = view.findViewById(R.id.btnSet);
         final CheckBox cbDeleteHighscores = view.findViewById(R.id.cbDeleteHighscores);
 
-        final SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         if (sharedPref.getBoolean("dark", false)) {
             rBtnDark.setChecked(true);
         } else {
@@ -53,26 +56,31 @@ public class SettingsFragment extends Fragment {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     deleteHighscores();
+                                    changeTheme();
                                 }
                             })
                             .setNegativeButton(R.string.no, null)
                             .create();
                     dialog.show();
-                }
-
-                if (sharedPref.getBoolean("dark", false) != rBtnDark.isChecked()) {
-                    Editor edit = sharedPref.edit();
-                    edit.putBoolean("dark", rBtnDark.isChecked());
-                    edit.apply();
-
-                    Intent intent = new Intent(getActivity(), MainActivity.class);
-                    startActivity(intent);
-                    getActivity().finish();
+                } else {
+                    changeTheme();
                 }
             }
         });
 
         return view;
+    }
+
+    private void changeTheme() {
+        if (sharedPref.getBoolean("dark", false) != rBtnDark.isChecked()) {
+            Editor edit = sharedPref.edit();
+            edit.putBoolean("dark", rBtnDark.isChecked());
+            edit.apply();
+
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            startActivity(intent);
+            getActivity().finish();
+        }
     }
 
     @SuppressLint("StaticFieldLeak")
