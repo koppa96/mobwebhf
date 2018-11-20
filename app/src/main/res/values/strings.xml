@@ -25,4 +25,12 @@
     <string name="save_successful">Your result has been successfully saved.</string>
     <string name="difficulty">Difficulty: %1$s</string>
     <string name="time">Time: %1$d:%2$d</string>
+    <string name="delete_this_game">Delete this game</string>
+    <string name="clear_the_board">Clear the board</string>
+    <string name="show_collisions">Show collisions</string>
+    <string name="sure">Are you sure?</string>
+    <string name="sure_delete_game">Are you sure want to delete this game?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="sure_clear_fields">Are your sure want to clear all the variable fields of the board?</string>
 </resources>

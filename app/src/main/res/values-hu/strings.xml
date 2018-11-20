@@ -26,4 +26,12 @@
     <string name="save_successful">Az eredményed sikeresen mentésre került.</string>
     <string name="difficulty">Nehézség: %1$s</string>
     <string name="time">Idő: %1$d:%2$d</string>
+    <string name="delete_this_game">Játék törlése</string>
+    <string name="clear_the_board">Tábla kiürítése</string>
+    <string name="show_collisions">Ütközések mutatása</string>
+    <string name="sure">Biztos?</string>
+    <string name="sure_delete_game">Biztosan törölni akarod ezt a játékot?</string>
+    <string name="yes">Igen</string>
+    <string name="no">Nem</string>
+    <string name="sure_clear_fields">Biztosan ki akarod üríteni az összes változó mezőt?</string>
 </resources>

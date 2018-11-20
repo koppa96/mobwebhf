@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ds">
+
+        <attr name="fixedFieldBackgroundColor" format="color" />
+        <attr name="tableLineColor" format="color" />
+        <attr name="currentFieldColor" format="color" />
+        <attr name="incorrectFieldColor" format="color" />
+
+    </declare-styleable>
+</resources>

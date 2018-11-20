@@ -30,7 +30,7 @@ public class HighscoreListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_highscore_list, container, false);
         recyclerView = view.findViewById(R.id.recyclerView);
         adapter = new HighscoreAdapter();
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
 
         loadHighscoresOfDifficulty(getArguments().getString("difficulty"));
@@ -43,7 +43,7 @@ public class HighscoreListFragment extends Fragment {
         new AsyncTask<String, Void, List<Highscore>>() {
             @Override
             protected List<Highscore> doInBackground(String... strings) {
-                AppDatabase database = AppDatabase.getInstance(getActivity().getApplicationContext());
+                AppDatabase database = AppDatabase.getInstance(getContext());
                 return database.highscoreDao().getHighscoresOfDifficulty(strings[0]);
             }
 

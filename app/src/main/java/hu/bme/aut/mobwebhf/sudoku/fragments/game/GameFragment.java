@@ -1,6 +1,9 @@
 package hu.bme.aut.mobwebhf.sudoku.fragments.game;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -8,19 +11,24 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.Set;
 
+import hu.bme.aut.mobwebhf.sudoku.MainActivity;
 import hu.bme.aut.mobwebhf.sudoku.R;
 import hu.bme.aut.mobwebhf.sudoku.data.database.AppDatabase;
 import hu.bme.aut.mobwebhf.sudoku.data.entity.SavedSudoku;
 import hu.bme.aut.mobwebhf.sudoku.fragments.highscore.HighscoreInputDialogFragment;
+import hu.bme.aut.mobwebhf.sudoku.model.Coordinate;
 import hu.bme.aut.mobwebhf.sudoku.model.Difficulty;
 import hu.bme.aut.mobwebhf.sudoku.model.SudokuBoard;
 import hu.bme.aut.mobwebhf.sudoku.model.SudokuField;
@@ -34,12 +42,19 @@ public class GameFragment extends Fragment {
     private HashMap<TextView, SudokuField> fieldMap;
     private AppDatabase database;
     private Timer timer;
+    private boolean gameDeleted;
+    private int colorBackground, colorFixedBackground, colorIncorrect, colorCurrent;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_game, container, false);
         database = AppDatabase.getInstance(getActivity().getApplicationContext());
+        gameDeleted = false;
+        getBackgroundColor();
+        getFixedBackgroundColor();
+        getCurrentColor();
+        getIncorrectColor();
 
         Bundle args = getArguments();
         if (args.getBoolean("issaved")) {
@@ -66,7 +81,7 @@ public class GameFragment extends Fragment {
                 fieldMap.put(boardGUI[i][j], boardModel.getBoard()[i][j]);
 
                 if (!boardModel.getBoard()[i][j].isVariable()) {
-                    boardGUI[i][j].setBackgroundColor(Color.argb(255, 240, 240, 240));
+                    boardGUI[i][j].setBackgroundColor(colorFixedBackground);
                 }
 
                 boardGUI[i][j].setOnClickListener(new View.OnClickListener() {
@@ -78,10 +93,10 @@ public class GameFragment extends Fragment {
                         }
 
                         if (selectedItem != null) {
-                            selectedItem.setBackgroundColor(Color.WHITE);
+                            selectedItem.setBackgroundColor(colorBackground);
                         }
                         selectedItem = (TextView) v;
-                        selectedItem.setBackgroundColor(Color.argb(255, 200, 200, 255));
+                        selectedItem.setBackgroundColor(colorCurrent);
                     }
                 });
             }
@@ -130,10 +145,100 @@ public class GameFragment extends Fragment {
             }
         });
 
+        final ImageButton imgBtnDelete = view.findViewById(R.id.imgBtnDelete);
+        imgBtnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog dialog = new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.sure)
+                        .setMessage(R.string.sure_delete_game)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                gameDeleted = true;
+                                MainActivity activity = (MainActivity) getActivity();
+                                activity.navigateHomeScreen();
+                            }
+                        })
+                        .setNegativeButton(R.string.no, null)
+                        .create();
+                dialog.show();
+            }
+        });
+
+        final ImageButton imgBtnClear = view.findViewById(R.id.imgBtnClear);
+        imgBtnClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog dialog = new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.sure)
+                        .setMessage(R.string.sure_clear_fields)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                for (TextView fieldGui : fieldMap.keySet()) {
+                                    SudokuField field = fieldMap.get(fieldGui);
+                                    if (field.isVariable()) {
+                                        field.setValue(0);
+                                        fieldGui.setText("");
+                                    }
+                                }
+                            }
+                        })
+                        .setNegativeButton(R.string.no, null)
+                        .create();
+                dialog.show();
+            }
+        });
+
+        final ImageButton imgBtnShowColls = view.findViewById(R.id.imgBtnShowColls);
+        imgBtnShowColls.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (Coordinate coord : boardModel.conflictingFields()) {
+                    if (fieldMap.get(boardGUI[coord.row][coord.col]).isVariable()) {
+                        boardGUI[coord.row][coord.col].setBackgroundColor(colorIncorrect);
+                    }
+                }
+            }
+        });
+
         updateViewFromModel();
         timer.start();
 
         return view;
+    }
+
+    private void getCurrentColor() {
+        TypedValue value = new TypedValue();
+        Activity activity = getActivity();
+        if (activity.getTheme().resolveAttribute(R.attr.currentFieldColor, value, true)) {
+            colorCurrent = value.data;
+        }
+    }
+
+    private void getIncorrectColor() {
+        TypedValue value = new TypedValue();
+        Activity activity = getActivity();
+        if (activity.getTheme().resolveAttribute(R.attr.incorrectFieldColor, value, true)) {
+            colorIncorrect = value.data;
+        }
+    }
+
+    private void getFixedBackgroundColor() {
+        TypedValue value = new TypedValue();
+        Activity activity = getActivity();
+        if (activity.getTheme().resolveAttribute(R.attr.fixedFieldBackgroundColor, value, true)) {
+            colorFixedBackground = value.data;
+        }
+    }
+
+    private void getBackgroundColor() {
+        TypedValue value = new TypedValue();
+        Activity activity = getActivity();
+        if (activity.getTheme().resolveAttribute(android.R.attr.windowBackground, value, true)) {
+            colorBackground = value.data;
+        }
     }
 
     private void updateViewFromModel() {
@@ -154,12 +259,12 @@ public class GameFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        timer.stopTimer();
 
-        if (boardModel.isFilled() && boardModel.checkIfWon()) {
+        if (gameDeleted || boardModel.isFilled() && boardModel.checkIfWon()) {
             return;
         }
 
-        timer.stopTimer();
         new AsyncTask<SudokuBoard, Void, Void>() {
             @Override
             protected Void doInBackground(SudokuBoard... sudokuBoards) {

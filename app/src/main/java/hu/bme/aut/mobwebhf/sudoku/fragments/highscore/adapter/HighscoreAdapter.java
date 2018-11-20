@@ -14,7 +14,11 @@ import hu.bme.aut.mobwebhf.sudoku.R;
 import hu.bme.aut.mobwebhf.sudoku.data.entity.Highscore;
 
 public class HighscoreAdapter extends RecyclerView.Adapter<HighscoreAdapter.HighscoreViewHolder> {
-    private final List<Highscore> highscores = new ArrayList<>();
+    private List<Highscore> highscores;
+
+    public HighscoreAdapter() {
+        highscores = new ArrayList<>();
+    }
 
     @NonNull
     @Override
