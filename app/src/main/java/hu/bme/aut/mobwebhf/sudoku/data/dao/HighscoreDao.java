@@ -5,6 +5,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import hu.bme.aut.mobwebhf.sudoku.data.entity.Highscore;
@@ -16,6 +17,9 @@ public interface HighscoreDao {
 
     @Query("SELECT * FROM highscores WHERE difficulty = :diff ORDER BY seconds")
     List<Highscore> getHighscoresOfDifficulty(String diff);
+
+    @Query("DELETE FROM highscores")
+    void deleteAll();
 
     @Insert
     void insert(Highscore highscore);

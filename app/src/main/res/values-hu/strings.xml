@@ -20,7 +20,7 @@
     <string name="your_name">A neved</string>
     <string name="congratulations">Gratulálok</string>
     <string name="highscore_input_description">Sikeresen megoldottad a sudokut. Kérlek add meg a neved, és az eredményed mentésre kerül. Ha nem szeretnéd menteni, nyomd meg a mégse gombot.</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="cancel">Mégse</string>
     <string name="must_fill">Ezt muszáj kitölteni.</string>
     <string name="save_successful">Az eredményed sikeresen mentésre került.</string>
@@ -34,4 +34,17 @@
     <string name="yes">Igen</string>
     <string name="no">Nem</string>
     <string name="sure_clear_fields">Biztosan ki akarod üríteni az összes változó mezőt?</string>
+    <string name="set_application_theme">Téma beállítása</string>
+    <string name="light">Világos</string>
+    <string name="dark">Sötét</string>
+    <string name="delete_highscores">Toplista törlése</string>
+    <string name="sure_delete_highscores">Biztosan törölni akarod az egész toplistát? Ezt később nem fogod tudni visszavonni.</string>
+    <string name="highscores_deleted">A toplista sikeresen kiürítve.</string>
+    <string name="btn_delete_descrip">Ezzel a gombbal törölheted a játékot.</string>
+    <string name="got_it">RENDBEN</string>
+    <string name="btn_clear_descrip">Ezzel a gombbal kitörölheted az összes általad beírt számot.</string>
+    <string name="btn_showcolls_descrip">Ezzel a gombbal kiemelheted az egymással ütköző mezőket.</string>
+    <string name="board_descrip">Válassz egy üres mezőt és használd a lenti gombok egyikét, hogy kitöltsd. A nem fix mezők később is módosíthatók.</string>
+    <string name="btndel_descrip">Ezzel a gombbal törölheted az aktuálisan kiválasztott mező tartalmát.</string>
+    <string name="apply">Alkalmaz</string>
 </resources>

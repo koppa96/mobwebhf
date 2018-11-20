@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +34,8 @@ import hu.bme.aut.mobwebhf.sudoku.model.Difficulty;
 import hu.bme.aut.mobwebhf.sudoku.model.SudokuBoard;
 import hu.bme.aut.mobwebhf.sudoku.model.SudokuField;
 import hu.bme.aut.mobwebhf.sudoku.model.Timer;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 public class GameFragment extends Fragment {
     private TextView[][] boardGUI;
@@ -205,6 +208,27 @@ public class GameFragment extends Fragment {
 
         updateViewFromModel();
         timer.start();
+
+        TextView firstEmptyFieldView = boardGUI[0][0];
+        for (TextView textView : fieldMap.keySet()) {
+            if (fieldMap.get(textView).isVariable()) {
+                firstEmptyFieldView = textView;
+                break;
+            }
+        }
+
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500);
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity(), "SEQ_ID");
+        sequence.setConfig(config);
+        sequence.addSequenceItem(firstEmptyFieldView, getString(R.string.board_descrip), getString(R.string.got_it));
+        sequence.addSequenceItem(btnDel, getString(R.string.btndel_descrip), getString(R.string.got_it));
+        sequence.addSequenceItem(imgBtnDelete, getString(R.string.btn_delete_descrip), getString(R.string.got_it));
+        sequence.addSequenceItem(imgBtnClear, getString(R.string.btn_clear_descrip), getString(R.string.got_it));
+        sequence.addSequenceItem(imgBtnShowColls, getString(R.string.btn_showcolls_descrip), getString(R.string.got_it));
+
+        sequence.start();
 
         return view;
     }

@@ -19,7 +19,7 @@
     <string name="your_name">Your name</string>
     <string name="congratulations">Congratulations</string>
     <string name="highscore_input_description">You have successfully solved this sudoku. Please enter your name below and your result will be saved. If you don\'t want it to be saved, hit cancel.</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="must_fill">This must be filled.</string>
     <string name="save_successful">Your result has been successfully saved.</string>
@@ -33,4 +33,17 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="sure_clear_fields">Are your sure want to clear all the variable fields of the board?</string>
+    <string name="set_application_theme">Set application theme</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="delete_highscores">Delete highscores</string>
+    <string name="sure_delete_highscores">Are you sure want to delet all the data from the highscores? This can\'t be undone.</string>
+    <string name="highscores_deleted">Highscores successfully deleted.</string>
+    <string name="btn_delete_descrip">You can delete this game by pressing this button.</string>
+    <string name="got_it">GOT IT</string>
+    <string name="btn_clear_descrip">You can clear all the filled numbers by pressing this button.</string>
+    <string name="btn_showcolls_descrip">You can highlight the conflicting fields by pressing this button.</string>
+    <string name="board_descrip">Choose an empty field and press a button with a number to fill it. You can modify the fields that are not fixed.</string>
+    <string name="btndel_descrip">You can delete the content of the currently selected tile with this button.</string>
+    <string name="apply">Apply</string>
 </resources>
