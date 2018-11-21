@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity
                             implements NavigationView.OnNavigationItemSelectedListener {
     private AppDatabase database;
     private DrawerLayout drawerLayout;
+    private boolean onGameFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_playgame);
+        onGameFragment = false;
 
         loadSavedSudokuCount();
     }
@@ -76,20 +78,22 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
-            protected void onPostExecute(Integer count) {
-                if (count > 0) {
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
-                            .replace(R.id.fragment_container, new PauseFragment())
-                            .commit();
-                } else {
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
-                            .replace(R.id.fragment_container, new HomeFragment())
-                            .commit();
-                }
+                protected void onPostExecute(Integer count) {
+                    if (count > 0) {
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
+                                .replace(R.id.fragment_container, new PauseFragment())
+                                .commit();
+                        onGameFragment = true;
+                    } else {
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
+                                .replace(R.id.fragment_container, new HomeFragment())
+                                .commit();
+                        onGameFragment = true;
+                    }
             }
         }.execute();
     }
@@ -99,19 +103,23 @@ public class MainActivity extends AppCompatActivity
         FragmentManager manager = getSupportFragmentManager();
         switch (menuItem.getItemId()) {
             case R.id.nav_playgame:
-                loadSavedSudokuCount();
+                if (!onGameFragment) {
+                    loadSavedSudokuCount();
+                }
                 break;
             case R.id.nav_highscores:
                 FragmentTransaction transaction = manager.beginTransaction();
                 transaction.setCustomAnimations(R.animator.fade_in, R.animator.fade_out);
                 transaction.replace(R.id.fragment_container, new HighscoreFragment());
                 transaction.commit();
+                onGameFragment = false;
                 break;
             case R.id.nav_settings:
                 transaction = manager.beginTransaction();
                 transaction.setCustomAnimations(R.animator.fade_in, R.animator.fade_out);
                 transaction.replace(R.id.fragment_container, new SettingsFragment());
                 transaction.commit();
+                onGameFragment = false;
                 break;
         }
 
@@ -141,6 +149,7 @@ public class MainActivity extends AppCompatActivity
                 .setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
                 .replace(R.id.fragment_container, new HomeFragment())
                 .commit();
+        onGameFragment = true;
     }
 
     @Override
